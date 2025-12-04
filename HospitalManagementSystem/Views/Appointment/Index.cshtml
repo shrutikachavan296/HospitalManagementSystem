@@ -1,0 +1,66 @@
+﻿@model IEnumerable<HospitalManagementSystem.Models.Appointment>
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Appointments List";
+    Layout = "_Layout";
+
+    var userRole = Context.Session.GetString("UserRole") ?? "";
+    var isAdmin = userRole.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+    var isDoctor = userRole.Equals("Doctor", StringComparison.OrdinalIgnoreCase);
+}
+
+<h2 class="text-primary mb-3">Appointments</h2>
+
+@if (!isDoctor)
+{
+    <a asp-action="Create" class="btn btn-success mb-3">+ Add Appointment</a>
+}
+else
+{
+    <div class="mb-3"></div>
+}
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Notes</th>
+
+            @if (!isDoctor || isAdmin)
+            {
+                <th>Actions</th>
+            }
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var a in Model)
+        {
+            <tr>
+                <td>@a.AppointmentId</td>
+                <td>@a.Patient?.PatientName</td>
+                <td>@a.Doctor?.Name</td>
+                <td>@a.AppointmentDate.ToString("yyyy-MM-dd")</td>
+                <td>@a.Notes</td>
+
+                @if (!isDoctor || isAdmin)
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@a.AppointmentId" class="btn btn-primary btn-sm">Edit</a>
+
+                        <a asp-action="Delete"
+                           asp-route-id="@a.AppointmentId"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Are you sure?');">
+                            Delete
+                        </a>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

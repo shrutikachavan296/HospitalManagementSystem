@@ -1,0 +1,63 @@
+﻿@model IEnumerable<HospitalManagementSystem.Models.Doctor>
+@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "Doctors List";
+    Layout = "_Layout";
+
+    var userRole = Context.Session.GetString("UserRole") ?? "";
+    var isAdmin = userRole.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+}
+
+<h2 class="text-primary mb-3">Doctors</h2>
+
+@if (isAdmin)
+{
+    <a asp-action="Create" class="btn btn-success mb-3">+ Add New Doctor</a>
+}
+else
+{
+    <div class="mb-3"></div>
+}
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Specialization</th>
+            <th>Phone</th>
+            <th>Patients Count</th>
+            @if (isAdmin)
+            {
+                <th>Actions</th>
+            }
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var d in Model)
+        {
+            <tr>
+                <td>@d.DoctorId</td>
+                <td>@d.Name</td>
+                <td>@d.Specialization</td>
+                <td>@d.Phone</td>
+                <td>@(d.Patients?.Count() ?? 0)</td>
+
+                @if (isAdmin)
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@d.DoctorId" class="btn btn-primary btn-sm">Edit</a>
+
+                        <a asp-action="Delete"
+                           asp-route-id="@d.DoctorId"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Are you sure?');">
+                            Delete
+                        </a>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

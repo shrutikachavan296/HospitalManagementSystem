@@ -1,0 +1,70 @@
+﻿
+@model HospitalManagementSystem.Models.Appointment
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Edit Appointment";
+    Layout = "_Layout";
+
+    var role = Context.Session.GetString("UserRole") ?? "";
+    var isAdminOrDoctor = role.Equals("Admin", StringComparison.OrdinalIgnoreCase)
+                       || role.Equals("Doctor", StringComparison.OrdinalIgnoreCase);
+}
+
+<h2 class="text-primary mb-3">Edit Appointment</h2>
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+<form asp-action="Edit" method="post" class="row g-3">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="AppointmentId" />
+
+    <div class="col-md-6">
+        <label asp-for="PatientId" class="form-label">Select Patient</label>
+
+        @if (isAdminOrDoctor)
+        {
+            <select asp-for="PatientId" class="form-select" asp-items="ViewBag.Patients">
+                <option value="">-- Select Patient --</option>
+            </select>
+        }
+        else
+        {
+     
+            <input class="form-control" type="text" value="@Model.Patient?.PatientName" readonly />
+            <input type="hidden" asp-for="PatientId" />
+        }
+
+        <span asp-validation-for="PatientId" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="DoctorId" class="form-label">Select Doctor</label>
+        <select asp-for="DoctorId" class="form-select" asp-items="ViewBag.Doctors">
+            <option value="">-- Select Doctor --</option>
+        </select>
+        <span asp-validation-for="DoctorId" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="AppointmentDate" class="form-label"></label>
+        <input asp-for="AppointmentDate" type="date" class="form-control" />
+        <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-12">
+        <label asp-for="Notes" class="form-label"></label>
+        <textarea asp-for="Notes" class="form-control"></textarea>
+        <span asp-validation-for="Notes" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <button class="btn btn-primary">Update</button>
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

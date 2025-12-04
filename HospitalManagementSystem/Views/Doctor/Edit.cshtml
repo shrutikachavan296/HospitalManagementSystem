@@ -1,0 +1,42 @@
+﻿@model HospitalManagementSystem.Models.Doctor
+@{
+    ViewData["Title"] = "Edit Doctor";
+    Layout = "_Layout";
+}
+
+<h2 class="text-primary mb-3">Edit Doctor</h2>
+
+<form asp-action="Edit" method="post" class="row g-3">
+
+    <input type="hidden" asp-for="DoctorId" />
+
+    <div class="col-md-6">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Specialization" class="form-label"></label>
+        <input asp-for="Specialization" class="form-control" />
+        <span asp-validation-for="Specialization" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Phone" class="form-label"></label>
+        <input asp-for="Phone" class="form-control" />
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+
+  
+
+    <div class="col-12">
+        <button class="btn btn-primary">Update</button>
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </div>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

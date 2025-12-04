@@ -1,0 +1,28 @@
+﻿@model HospitalManagementSystem.Models.ApplicationUser
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Assign Role";
+    var roles = ViewBag.Roles as IEnumerable<HospitalManagementSystem.Models.Role> ?? Enumerable.Empty<HospitalManagementSystem.Models.Role>();
+}
+
+<h2 class="mb-3">Assign Role to: @Model.FullName</h2>
+
+<form asp-action="AssignRole" method="post" class="row g-3">
+    <input type="hidden" name="userId" value="@Model.UserId" />
+
+    <div class="col-md-6">
+        <label class="form-label">Select Role</label>
+        <select name="roleId" class="form-select">
+            <option value="">-- Select --</option>
+            @foreach (var r in roles)
+            {
+                <option value="@r.RoleId" selected="@(Model.RoleId == r.RoleId ? "selected" : null)">@r.RoleName</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-12">
+        <button class="btn btn-warning">Assign</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Back</a>
+    </div>
+</form>

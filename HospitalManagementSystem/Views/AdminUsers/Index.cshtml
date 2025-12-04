@@ -1,0 +1,48 @@
+﻿@model IEnumerable<HospitalManagementSystem.Models.ApplicationUser>
+@{
+    ViewData["Title"] = "Manage Users";
+    Layout = "_Layout";
+    var roleMap = ViewBag.Roles as Dictionary<int, string> ?? new();
+}
+
+<h2 class="mb-3">Manage Users</h2>
+
+<table class="table table-bordered table-striped align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Id</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Role</th>
+            <th style="width: 250px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            int idx = 1;
+            foreach (var u in Model)
+            {
+                <tr>
+                    <td>@idx</td>
+                    <td>@u.FullName</td>
+                    <td>@u.Email</td>
+                    <td>@u.Phone</td>
+                    <td>@(roleMap.ContainsKey(u.RoleId) ? roleMap[u.RoleId] : "—")</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@u.UserId" class="btn btn-sm btn-primary">Edit</a>
+                        <a asp-action="AssignRole" asp-route-id="@u.UserId" class="btn btn-sm btn-warning">Assign Role</a>
+                        <a asp-action="Delete" asp-route-id="@u.UserId" class="btn btn-sm btn-danger"
+                           onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                    </td>
+                </tr>
+                idx++;
+            }
+        }
+        else
+        {
+            <tr><td colspan="6" class="text-center p-3">No users found.</td></tr>
+        }
+    </tbody>
+</table>

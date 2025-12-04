@@ -1,0 +1,133 @@
+﻿@* @model IEnumerable<HospitalManagementSystem.Models.Patient>
+@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "Patients List";
+    Layout = "_Layout";
+
+    var userRole = Context.Session.GetString("UserRole") ?? "";
+    var isAdmin = userRole.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+    var userIdStr = Context.Session.GetString("UserId") ?? "";
+    int.TryParse(userIdStr, out var currentUserId);
+}
+
+<h2 class="text-primary mb-3">Patients</h2>
+
+<a asp-action="Create" class="btn btn-success mb-3">+ Add New Patient</a>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>DOB</th>
+            <th>Doctor</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.PatientId</td>
+                <td>@p.PatientName</td>
+                <td>@p.Phone</td>
+                <td>@p.Address</td>
+                <td>@p.DOB.ToString("yyyy-MM-dd")</td>
+                <td>@p.Doctor?.Name</td>
+                <td>
+                    @if (isAdmin || (p.OwnerUserId != null && p.OwnerUserId == currentUserId))
+                    {
+                        <a asp-action="Edit" asp-route-id="@p.PatientId" class="btn btn-primary btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@p.PatientId"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Are you sure?');">Delete</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Read-only</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table> *@
+
+@model IEnumerable<HospitalManagementSystem.Models.Patient>
+@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "Patients List";
+    Layout = "_Layout";
+
+    var userRole = Context.Session.GetString("UserRole") ?? "";
+    var isAdmin = userRole.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+    var isDoctor = userRole.Equals("Doctor", StringComparison.OrdinalIgnoreCase);
+
+    var userIdStr = Context.Session.GetString("UserId") ?? "";
+    int.TryParse(userIdStr, out var currentUserId);
+}
+
+<h2 class="text-primary mb-3">Patients</h2>
+
+@* Show Create button only for Admins and non-doctor users (patients) *@
+@if (!isDoctor)
+{
+    <a asp-action="Create" class="btn btn-success mb-3">+ Add New Patient</a>
+}
+else
+{
+    <div class="mb-3"></div>
+}
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>DOB</th>
+            <th>Doctor</th>
+
+            @* Show Actions header only to Admins and non-doctor users *@
+            @if (!isDoctor)
+            {
+                <th>Actions</th>
+            }
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.PatientId</td>
+                <td>@p.PatientName</td>
+                <td>@p.Phone</td>
+                <td>@p.Address</td>
+                <td>@p.DOB.ToString("yyyy-MM-dd")</td>
+                <td>@p.Doctor?.Name</td>
+
+                @* Show action buttons only to Admin or owner (patient user). Doctors won't see this column. *@
+                @if (!isDoctor)
+                {
+                    <td>
+                        @if (isAdmin || (p.OwnerUserId != null && p.OwnerUserId == currentUserId)) 
+                        {
+                            <a asp-action="Edit" asp-route-id="@p.PatientId" class="btn btn-primary btn-sm">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@p.PatientId"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Are you sure?');">Delete</a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Read-only</span>
+                        }
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,17 @@
+﻿@model HospitalManagementSystem.Models.ApplicationUser
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Delete User";
+}
+
+<h2>Delete User</h2>
+
+<div class="alert alert-danger">
+    Are you sure you want to delete <strong>@Model.FullName</strong> (Email: @Model.Email)?
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" name="id" value="@Model.UserId" />
+    <button class="btn btn-danger">Yes, delete</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+</form>

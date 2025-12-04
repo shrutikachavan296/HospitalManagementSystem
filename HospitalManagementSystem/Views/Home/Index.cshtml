@@ -1,0 +1,71 @@
+﻿@model HospitalManagementSystem.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_Layout";
+}
+
+<h2 class="text-primary mb-4">Dashboard</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Total Patients</h5>
+                <p class="card-text display-6">@Model.TotalPatients</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Total Doctors</h5>
+                <p class="card-text display-6">@Model.TotalDoctors</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">Total Appointments</h5>
+                <p class="card-text display-6">@Model.TotalAppointments</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h5 class="card-title">Pending Lab Orders</h5>
+                <p class="card-text display-6">@Model.PendingLabOrders</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="text-primary mb-3">Recent Appointments</h4>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Appointment Date</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var appt in Model.RecentAppointments)
+        {
+            <tr>
+                <td>@appt.AppointmentId</td>
+                <td>@appt.Patient?.PatientName</td>
+                <td>@appt.Doctor?.Name</td>
+                <td>@appt.AppointmentDate.ToString("yyyy-MM-dd")</td>
+                <td>@appt.Notes</td>
+            </tr>
+        }
+    </tbody>
+</table>

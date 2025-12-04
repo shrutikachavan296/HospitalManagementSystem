@@ -1,0 +1,113 @@
+﻿@* @model HospitalManagementSystem.Models.LabOrder
+@{
+    ViewData["Title"] = "Add Lab Order";
+    Layout = "_Layout";
+}
+
+<h2 class="text-primary mb-3">Add Lab Order</h2>
+
+<form asp-action="Create" method="post" class="row g-3">
+
+    <div class="col-md-6">
+        <label asp-for="PatientId" class="form-label">Select Patient</label>
+        <select asp-for="PatientId" class="form-control" asp-items="ViewBag.PatientId">
+            <option value="">-- Select Patient --</option>
+        </select>
+        <span asp-validation-for="PatientId" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="TestName" class="form-label"></label>
+        <input asp-for="TestName" class="form-control" />
+        <span asp-validation-for="TestName" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<HospitalManagementSystem.Models.LabStatus>()">
+        </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <button class="btn btn-success">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </div>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} *@
+
+@model HospitalManagementSystem.Models.LabOrder
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Add Lab Order";
+    Layout = "_Layout";
+
+    var role = Context.Session.GetString("UserRole") ?? "";
+    var isAdmin = role.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+    var isDoctor = role.Equals("Doctor", StringComparison.OrdinalIgnoreCase);
+    var isLabOrderRole = role.Equals("LabOrder", StringComparison.OrdinalIgnoreCase);
+
+    // only these roles can create
+    var canModify = isAdmin || isDoctor || isLabOrderRole;
+}
+
+<h2 class="text-primary mb-3">Add Lab Order</h2>
+
+@if (!canModify)
+{
+    <div class="alert alert-warning">
+        You are not authorized to create lab orders. If you are a patient, please contact the clinic staff.
+    </div>
+
+    @* Optionally show a read-only placeholder to explain what fields would be *@
+    <div class="card p-3 mb-3">
+        <div><strong>Patient:</strong> (selectable by staff)</div>
+        <div><strong>Test Name:</strong> (entered by staff)</div>
+        <div><strong>Status:</strong> (set by staff)</div>
+    </div>
+
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+}
+else
+{
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <form asp-action="Create" method="post" class="row g-3">
+        @Html.AntiForgeryToken()
+
+        <div class="col-md-6">
+            <label asp-for="PatientId" class="form-label">Select Patient</label>
+            <select asp-for="PatientId" class="form-control" asp-items="ViewBag.PatientId">
+                <option value="">-- Select Patient --</option>
+            </select>
+            <span asp-validation-for="PatientId" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="TestName" class="form-label"></label>
+            <input asp-for="TestName" class="form-control" />
+            <span asp-validation-for="TestName" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Status" class="form-label"></label>
+            <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<HospitalManagementSystem.Models.LabStatus>()">
+            </select>
+            <span asp-validation-for="Status" class="text-danger"></span>
+        </div>
+
+        <div class="col-12">
+            <button class="btn btn-success">Save</button>
+            <a asp-action="Index" class="btn btn-secondary">Back</a>
+        </div>
+    </form>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

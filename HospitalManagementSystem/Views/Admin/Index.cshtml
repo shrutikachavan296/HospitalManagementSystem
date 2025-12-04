@@ -1,0 +1,34 @@
+﻿@model HospitalManagementSystem.Models.AdminDashboardViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml"; 
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2>Admin Dashboard</h2>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h5>Total Doctors</h5>
+            <h3>@Model.DoctorCount</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h5>Total Patients</h5>
+            <h3>@Model.PatientCount</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h5>Total Appointments</h5>
+            <h3>@Model.AppointmentCount</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 shadow-sm">
+            <h5>Total Lab Orders</h5>
+            <h3>@Model.LabOrderCount</h3>
+        </div>
+    </div>
+</div>

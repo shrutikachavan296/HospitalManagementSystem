@@ -1,0 +1,106 @@
+﻿@* @model IEnumerable<HospitalManagementSystem.Models.LabOrder>
+@{
+    ViewData["Title"] = "Lab Orders";
+    Layout = "_Layout";
+}
+
+<h2 class="text-primary mb-3">Lab Orders</h2>
+
+<a asp-action="Create" class="btn btn-success mb-3">+ Add Lab Order</a>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Patient</th>
+            <th>Test Name</th>
+            <th>Ordered At</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.LabOrderId</td>
+                <td>@order.Patient?.PatientName</td>
+                <td>@order.TestName</td>
+                <td>@order.OrderedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@order.Status</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@order.LabOrderId" class="btn btn-primary btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@order.LabOrderId"
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('Are you sure?');">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table> *@
+@model IEnumerable<HospitalManagementSystem.Models.LabOrder>
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Lab Orders";
+    Layout = "_Layout";
+
+    var role = Context.Session.GetString("UserRole") ?? "";
+    var isAdmin = role.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+    var isDoctor = role.Equals("Doctor", StringComparison.OrdinalIgnoreCase);
+    var isLabOrderRole = role.Equals("LabOrder", StringComparison.OrdinalIgnoreCase);
+
+    var canModify = isAdmin || isDoctor || isLabOrderRole;
+
+    var userIdStr = Context.Session.GetString("UserId") ?? "";
+    int.TryParse(userIdStr, out var currentUserId);
+}
+
+<h2 class="text-primary mb-3">Lab Orders</h2>
+
+@if (canModify)
+{
+    <a asp-action="Create" class="btn btn-success mb-3">+ Add Lab Order</a>
+}
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Patient</th>
+            <th>Test Name</th>
+            <th>Ordered At</th>
+            <th>Status</th>
+            @* show Actions header only if user can modify *@
+            @if (canModify)
+            {
+                <th>Actions</th>
+            }
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.LabOrderId</td>
+                <td>@order.Patient?.PatientName</td>
+                <td>@order.TestName</td>
+                <td>@order.OrderedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@order.Status</td>
+
+                @* show action buttons only to allowed roles *@
+                @if (canModify)
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@order.LabOrderId" class="btn btn-primary btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@order.LabOrderId"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Are you sure?');">Delete</a>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,114 @@
+﻿@* @model HospitalManagementSystem.Models.LabOrder
+@{
+    ViewData["Title"] = "Edit Lab Order";
+    Layout = "_Layout";
+}
+
+<h2 class="text-primary mb-3">Edit Lab Order</h2>
+
+<form asp-action="Edit" method="post" class="row g-3">
+    <input type="hidden" asp-for="LabOrderId" />
+
+    <div class="col-md-6">
+        <label asp-for="PatientId" class="form-label">Select Patient</label>
+        <select asp-for="PatientId" class="form-control" asp-items="ViewBag.PatientId">
+            <option value="">-- Select Patient --</option>
+        </select>
+        <span asp-validation-for="PatientId" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="TestName" class="form-label"></label>
+        <input asp-for="TestName" class="form-control" />
+        <span asp-validation-for="TestName" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<HospitalManagementSystem.Models.LabStatus>()">
+        </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <button class="btn btn-primary">Update</button>
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </div>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} *@
+@model HospitalManagementSystem.Models.LabOrder
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Edit Lab Order";
+    Layout = "_Layout";
+
+    var role = Context.Session.GetString("UserRole") ?? "";
+    var isAdmin = role.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+    var isDoctor = role.Equals("Doctor", StringComparison.OrdinalIgnoreCase);
+    var isLabOrderRole = role.Equals("LabOrder", StringComparison.OrdinalIgnoreCase);
+
+    // only these roles can edit
+    var canModify = isAdmin || isDoctor || isLabOrderRole;
+}
+
+<h2 class="text-primary mb-3">Edit Lab Order</h2>
+
+@if (!canModify)
+{
+    <div class="alert alert-warning">
+        You are not authorized to edit lab orders. If you are a patient, you can view your lab orders in the list.
+    </div>
+
+    <div class="card mb-3 p-3">
+        <div class="mb-2"><strong>Patient:</strong> @Model.Patient?.PatientName</div>
+        <div class="mb-2"><strong>Test Name:</strong> @Model.TestName</div>
+        <div class="mb-2"><strong>Ordered At:</strong> @Model.OrderedAt.ToString("yyyy-MM-dd HH:mm")</div>
+        <div class="mb-2"><strong>Status:</strong> @Model.Status</div>
+    </div>
+
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+}
+else
+{
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <form asp-action="Edit" method="post" class="row g-3">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="LabOrderId" />
+
+        <div class="col-md-6">
+            <label asp-for="PatientId" class="form-label">Select Patient</label>
+            <select asp-for="PatientId" class="form-control" asp-items="ViewBag.PatientId">
+                <option value="">-- Select Patient --</option>
+            </select>
+            <span asp-validation-for="PatientId" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="TestName" class="form-label"></label>
+            <input asp-for="TestName" class="form-control" />
+            <span asp-validation-for="TestName" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Status" class="form-label"></label>
+            <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<HospitalManagementSystem.Models.LabStatus>()">
+            </select>
+            <span asp-validation-for="Status" class="text-danger"></span>
+        </div>
+
+        <div class="col-12">
+            <button class="btn btn-primary">Update</button>
+            <a asp-action="Index" class="btn btn-secondary">Back</a>
+        </div>
+    </form>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
